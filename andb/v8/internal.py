@@ -1616,7 +1616,7 @@ class Value(AutoLayout, ChunkBlock):
         dwf_consts = dbg.Dwf.ReadAllConsts(cls._typeName)
 
         # resolve c++ type
-        log.verbose("loaded object '%s'." % cls.__name__)
+        # log.verbose("loaded object '%s'." % cls.__name__)
         t = dbg.Type.LookupType(cls._typeName)
         if t is None:
             log.error("'%s' not found, use default layout." % (cls._typeName))

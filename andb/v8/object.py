@@ -435,7 +435,12 @@ class HeapObject(Object, Value):
         return InstanceType.isContext(self.instance_type)
     
     def IsNativeContext(self):
-        return InstanceType.isNativeContext(self.instance_type)
+        try:
+            return InstanceType.isNativeContext(self.instance_type)
+        except Exception as e:
+            # import traceback
+            # traceback.print_exc()
+            return False
 
     def IsFixedArray(self):
         return InstanceType.isFixedArray(self.instance_type)
@@ -564,6 +569,9 @@ class HeapObject(Object, Value):
             except Exception as e:
                 err.ObjectError(o, e)
             return v
+        
+        # TODO
+        return 16
 
         # not supported.
         print("Unknown 0x%x: %s (%d)" % (self.tag, t.name, int(t)))
@@ -1584,9 +1592,15 @@ class Name(HeapObject):
             return String(self)
         raise Exception('New Type? %s' % self.instance_type)
 
-    def ToString(self):
+    def ToString(self, cached={}):
+        addr = int(self)
+        name = cached.get(addr)
+        if name is not None:
+            return name
         obj = self.BindObject()
-        return obj.ToString()
+        name = obj.ToString()
+        cached[addr] = name
+        return name
     
     def __str__(self):
         return self.ToString()
@@ -2437,16 +2451,33 @@ class DescriptorArray(HeapObject):
     def number_of_slack_descriptors(self):
         return self.number_of_all_descriptors - self.number_of_descriptors
 
-    def GetKey(self, index):
+    def GetKey(self, index, cached={}):
         #entry_offset = self.OffsetOfDescriptorAt(index) + (self.kEntryKeyIndex * Internal.kTaggedSize)
         return self.descriptors(index).key
 
-    def GetDetails(self, index):
+        addr = int(self)
+        key = (addr, index)
+        v = cached.get(key)
+        if v is not None:
+            return v
+        v = self.descriptors(index).key
+        cached[key] = v
+        return v
+
+    def GetDetails(self, index, cached={}):
         #entry_offset = self.OffsetOfDescriptorAt(index) + (self.kEntryDetailsIndex * Internal.kTaggedSize)
         #return PropertyDetails(self.LoadPtr(entry_offset))
         #v = self.descriptors(index + self.kEntryDetailsIndex)
         #return PropertyDetails(v)
         return self.descriptors(index).details
+        addr = int(self)
+        key = (addr, index)
+        v = cached.get(key)
+        if v is not None:
+            return v
+        v = self.descriptors(index).details
+        cached[key] = v
+        return v
 
     def GetValue(self, index):
         #entry_offset = self.OffsetOfDescriptorAt(index) + (self.kEntryValueIndex * Internal.kTaggedSize)
@@ -3089,8 +3120,14 @@ class JSFunction(JSObject):
     def has_prototype_or_initial_map(self):
         return self.Size() > self.kPrototypeOrInitialMapOffset 
 
-    def FunctionName(self):
-        return self.shared_function_info.GetFunctionName()
+    def FunctionName(self, cached={}):
+        addr = int(self)
+        name = cached.get(addr)
+        if name is not None:
+            return name
+        name = self.shared_function_info.GetFunctionName()
+        cached[addr] = name
+        return name
 
     def FunctionNameStr(self):
         """ return empty string if doesn't have a name """

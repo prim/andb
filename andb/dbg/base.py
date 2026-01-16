@@ -123,20 +123,20 @@ class Enum(object):
 
         cls._E_type = dbg.Type.LookupType(cls._typeName)
         if cls._E_type is None:
-            print("enum '%s' is not found." % (cls._typeName))
+            # print("enum '%s' is not found." % (cls._typeName))
             return
 
-        print("loaded enum '%s'."%(cls.__name__))
+        # print("loaded enum '%s'."%(cls.__name__))
         cache = {}
         for i in cls._E_type.GetEnumMembers():
             name = i['name']
             enumval = int(i['value'])
 
             # add Attribute
-            if hasattr(cls, name):
-                v = getattr(cls, name)
-                if v != enumval:
-                    print("%s::%s (%d) = %d"%(cls._E_type, name, v, enumval))
+            # if hasattr(cls, name):
+            #     v = getattr(cls, name)
+            #     if v != enumval:
+            #         print("%s::%s (%d) = %d"%(cls._E_type, name, v, enumval))
             setattr(cls, name, enumval)
 
             # save cache
@@ -313,7 +313,7 @@ class CommandsDispatcher(object):
                 ds[1][i] = [None, {}]
             ds = ds[1][i]
         ds[0] = pyo_cmd
-        print("command '%s' registered." % (pyo_cmd._cxpr))
+        # print("command '%s' registered." % (pyo_cmd._cxpr))
  
     @classmethod
     def Dispatch(cls, prefix, command):

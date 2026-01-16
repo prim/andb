@@ -815,9 +815,9 @@ class ObjectParser(GraphHolder):
             ho = v8.HeapObject(o)
             self._non_essential_addrs.append(ho.address)
 
-        print("Cache NonEssetialAddress,")
-        for p in self._non_essential_addrs:
-            print(" 0x%x" % p)
+        # print("Cache NonEssetialAddress,")
+        # for p in self._non_essential_addrs:
+        #     print(" 0x%x" % p)
 
     def ExtractObject(self, obj):
         # obj: HeapObject
@@ -1929,6 +1929,7 @@ class HeapSnapshot(GraphHolder):
 
         for name in spaces:
             space = heap.getSpace(name)
+            # PRIM 
             print(space.name)
             chunks = space.getChunks()
             for i in chunks:
@@ -1959,7 +1960,7 @@ class HeapSnapshot(GraphHolder):
         for p in pages:
             page = v8.MemoryChunk(p)
             cnt = cnt + 1
-            print("map_%d (%d/%d) page(0x%x)" % (index, cnt, len(pages), int(page)))
+            # print("map_%d (%d/%d) page(0x%x)" % (index, cnt, len(pages), int(page)))
             for obj in page.walk():
                 # skip free space
                 if v8.InstanceType.isFreeSpace(obj.instance_type) and \

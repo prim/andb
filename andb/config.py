@@ -40,7 +40,7 @@ class Config:
         ERROR >=50,
         CRITICAL >=60
     """
-    cfgLoggingLevel = 11 
+    cfgLoggingLevel = 30
 
     """ the flag limit the string length in heapsnapshot.
         the string larger than the limit will be cut to reduce the json file size.
